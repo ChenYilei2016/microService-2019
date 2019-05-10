@@ -9,9 +9,7 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashSet;
@@ -27,7 +25,7 @@ import java.util.concurrent.*;
  * @date 2019/04/29- 15:14
  */
 @RestController
-public class ServiceController {
+public class ServerServiceController {
 
     @Autowired
     private DiscoveryClient discoveryClient;
@@ -45,7 +43,7 @@ public class ServiceController {
     @Value("${server.port}")
     int mport;
 
-    @GetMapping(value = "/test",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/test",produces = "application/json;charset=utf-8")
 //    @HystrixCommand(
 //            fallbackMethod = "testFailBack"
 //            ,
@@ -54,8 +52,9 @@ public class ServiceController {
 //                            ,value = "100")
 //            }
 //    )
+
     @MyHystrixCommond
-    public Object test() throws InterruptedException, TimeoutException, ExecutionException {
+    public String test(@RequestParam(value = "msg",required = false)String msg) throws InterruptedException, TimeoutException, ExecutionException {
         int i = random.nextInt(200);
         Future<?> submit = executor.submit(() -> {
             try {
@@ -67,7 +66,7 @@ public class ServiceController {
         submit.get(100,TimeUnit.MILLISECONDS);
 
         System.err.println("test结尾");
-        return "你调用了provider的方法port:"+mport+" 时间: "+i;
+        return "你调用了provider的方法port:"+mport+" 时间: "+i+"msg: "+msg;
 
 
     }
