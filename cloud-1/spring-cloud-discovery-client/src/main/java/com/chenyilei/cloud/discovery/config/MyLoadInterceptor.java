@@ -70,8 +70,8 @@ public class MyLoadInterceptor implements ClientHttpRequestInterceptor {
         System.err.println(uri.getPort() );
         System.err.println(uri.getQuery() );
 
-        String targetUrl = serviceName_Urls_Map.get(uri.getPath().substring(1)).stream().findAny().get();
-        String reallyUrl = targetUrl+"/test";
+        String targetUrl = serviceName_Urls_Map.get(uri.getHost()).stream().findAny().get();
+        String reallyUrl = targetUrl+ uri.getPath() +"?"+uri.getQuery();
         System.out.println("reallyUrl = "+ reallyUrl);
         URL url = new URL(reallyUrl);
         URLConnection urlConnection = url.openConnection();

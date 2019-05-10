@@ -1,13 +1,22 @@
 package com.chenyilei.cloud.discovery.config;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpInputMessage;
+import org.springframework.http.HttpOutputMessage;
+import org.springframework.http.converter.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.lang.annotation.*;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -40,6 +49,9 @@ public class MyLoadBalanceAutoConifg {
     @MyLoadBalanced_
     public RestTemplate restTemplate;
 
+    @Autowired
+    @LoadBalanced
+    public RestTemplate restTemplate2;
 
     @Autowired
     MyLoadInterceptor myLoadInterceptor;

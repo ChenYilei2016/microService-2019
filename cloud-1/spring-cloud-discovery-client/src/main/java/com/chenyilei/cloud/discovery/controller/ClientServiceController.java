@@ -1,21 +1,19 @@
 package com.chenyilei.cloud.discovery.controller;
 
 import com.chenyilei.cloud.discovery.config.MyLoadBalanceAutoConifg;
+import com.chenyilei.cloud.discovery.myfeign.MyRestInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.MediaType;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.stream.Collectors;
+import java.util.Random;
 
 /**
  * --添加相关注释--
@@ -25,7 +23,7 @@ import java.util.stream.Collectors;
  * @date 2019/04/29- 15:14
  */
 @RestController
-public class ServiceController {
+public class ClientServiceController {
 
     @Autowired
     private DiscoveryClient discoveryClient;
@@ -36,6 +34,16 @@ public class ServiceController {
     @Autowired
     @MyLoadBalanceAutoConifg.MyLoadBalanced_
     RestTemplate restTemplate;
+
+    @Autowired
+    @LoadBalanced
+    RestTemplate ribbonRestTemplate;
+
+    @Autowired
+    InvokingServerService feignClient_;
+
+    @Autowired
+    MyRestInterface myRestInterface;
 
     private final static Random RANDOM = new Random();
 
@@ -48,20 +56,37 @@ public class ServiceController {
 //    oldSet.clear();
 
     //调用这个服务: spring-cloud-discovery-provider
+    //http://127.0.0.1:8080/invoke/spring-cloud-discovery-provider
     @GetMapping(value = "/invoke/{serviceName}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Object testLoadBalance(@PathVariable("serviceName")String serviceName){
         //访问注册中心的服务
 //        Set<String> instances = serviceName_Urls_Map.get(serviceName);
 //        String targetUrl = instances.parallelStream().findAny().get()+"/test";
 //        String forObject = restTemplate.getForObject(targetUrl, String.class);
-        String forObject = restTemplate.getForObject(serviceName, String.class);
+        String forObject = restTemplate.getForObject("http://"+serviceName+"/test?msg=ok", String.class);
         return forObject;
     }
 
+    @GetMapping(value = "/feign")
+    @ResponseBody
+    public Object feignInvoke(){
+        return feignClient_.test("ok1");
+    }
+
+    /**
+     * 调用我自己实现feign类
+     * @return
+     */
+    @GetMapping(value = "/myfeign")
+    public Object myFeignInvoke(){
+        return myRestInterface.test("ok1");
+    }
+
     @GetMapping(value = "/test",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Object get(){
+    public Object getRibbonMsg(){
         //return loadBalancerClient.choose(discoveryClient.getServices().get(0));
-        return "调用了client的方法port:8080";
+        return ribbonRestTemplate.getForObject("http://spring-cloud-discovery-provider/test?msg=ok", String.class);
+        //return "调用了client的方法port:8080";
     }
 
 }

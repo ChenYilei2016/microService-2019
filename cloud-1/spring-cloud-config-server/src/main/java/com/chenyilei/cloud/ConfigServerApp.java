@@ -41,6 +41,8 @@ public class ConfigServerApp {
     public static void main(String[] args) {
         new SpringApplicationBuilder(ConfigServerApp.class)
                 .run(args);
+        String a= "f";
+        System.out.println(String.class == a.getClass());
     }
 
     @Component
