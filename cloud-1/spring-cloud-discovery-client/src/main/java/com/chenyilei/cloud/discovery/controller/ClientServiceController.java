@@ -57,33 +57,34 @@ public class ClientServiceController {
 
     //调用这个服务: spring-cloud-discovery-provider
     //http://127.0.0.1:8080/invoke/spring-cloud-discovery-provider
-    @GetMapping(value = "/invoke/{serviceName}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Object testLoadBalance(@PathVariable("serviceName")String serviceName){
+    @GetMapping(value = "/invoke/{serviceName}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Object testLoadBalance(@PathVariable("serviceName") String serviceName) {
         //访问注册中心的服务
 //        Set<String> instances = serviceName_Urls_Map.get(serviceName);
 //        String targetUrl = instances.parallelStream().findAny().get()+"/test";
 //        String forObject = restTemplate.getForObject(targetUrl, String.class);
-        String forObject = restTemplate.getForObject("http://"+serviceName+"/test?msg=ok", String.class);
+        String forObject = restTemplate.getForObject("http://" + serviceName + "/test?msg=ok", String.class);
         return forObject;
     }
 
     @GetMapping(value = "/feign")
     @ResponseBody
-    public Object feignInvoke(){
+    public Object feignInvoke() {
         return feignClient_.test("ok1");
     }
 
     /**
      * 调用我自己实现feign类
+     *
      * @return
      */
     @GetMapping(value = "/myfeign")
-    public Object myFeignInvoke(){
+    public Object myFeignInvoke() {
         return myRestInterface.test("ok1");
     }
 
-    @GetMapping(value = "/test",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Object getRibbonMsg(){
+    @GetMapping(value = "/test", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Object getRibbonMsg() {
         //return loadBalancerClient.choose(discoveryClient.getServices().get(0));
         return ribbonRestTemplate.getForObject("http://spring-cloud-discovery-provider/test?msg=ok", String.class);
         //return "调用了client的方法port:8080";

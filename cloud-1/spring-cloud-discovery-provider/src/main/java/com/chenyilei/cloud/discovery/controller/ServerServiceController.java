@@ -9,6 +9,7 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,7 +25,7 @@ import java.util.concurrent.*;
  * @email 705029004@qq.com
  * @date 2019/04/29- 15:14
  */
-@RestController
+@Controller
 public class ServerServiceController {
 
     @Autowired
@@ -43,7 +44,13 @@ public class ServerServiceController {
     @Value("${server.port}")
     int mport;
 
-    @GetMapping(value = "/test",produces = "application/json;charset=utf-8")
+    @GetMapping(value = "")
+    public String test2(){
+        return "testttt2";
+    }
+
+    @GetMapping(value = "/test")
+    @ResponseBody
 //    @HystrixCommand(
 //            fallbackMethod = "testFailBack"
 //            ,
@@ -54,7 +61,7 @@ public class ServerServiceController {
 //    )
 
     @MyHystrixCommond
-    public String test(@RequestParam(value = "msg",required = false)String msg) throws InterruptedException, TimeoutException, ExecutionException {
+    public String test() throws InterruptedException, TimeoutException, ExecutionException {
         int i = random.nextInt(200);
         Future<?> submit = executor.submit(() -> {
             try {
@@ -63,16 +70,16 @@ public class ServerServiceController {
                 e.printStackTrace();
             }
         });
-        submit.get(100,TimeUnit.MILLISECONDS);
+        submit.get(100, TimeUnit.MILLISECONDS);
 
         System.err.println("test结尾");
-        return "你调用了provider的方法port:"+mport+" 时间: "+i+"msg: "+msg;
+        return "你调用了provider的方法port:" + mport + " 时间: " + i ;
 
 
     }
 
     //要保持相同签名 参数，返回值等
-    public Object testFailBack(){
+    public Object testFailBack() {
         System.err.println("调用了熔断");
         return "熔断信息";
     }

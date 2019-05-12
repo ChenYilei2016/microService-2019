@@ -23,6 +23,7 @@ public class MyHttpConvert1 implements HttpMessageConverter {
     /**
      * [Content-Type = application/json,charset=utf-8] == mediaType
      * [accpetType = JSON ] == mediaType
+     *
      * @param clazz
      * @param mediaType
      * @return

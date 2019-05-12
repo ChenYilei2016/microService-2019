@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  * @email 705029004@qq.com
  * @date 2019/05/09- 14:25
  */
-public class MyFeignRegistry implements ImportBeanDefinitionRegistrar, BeanFactoryAware , ApplicationContextAware {
+public class MyFeignRegistry implements ImportBeanDefinitionRegistrar, BeanFactoryAware, ApplicationContextAware {
 
     private BeanFactory beanFactory;
     private ApplicationContext applicationContext;
@@ -36,12 +36,12 @@ public class MyFeignRegistry implements ImportBeanDefinitionRegistrar, BeanFacto
     //将我们标注MyFeignClient的接口变为代理
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata
-                                        , BeanDefinitionRegistry registry) {
-        registerBeanByClients(importingClassMetadata,registry);
+            , BeanDefinitionRegistry registry) {
+        registerBeanByClients(importingClassMetadata, registry);
 
     }
 
-    private void registerBeanByClients(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry){
+    private void registerBeanByClients(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 
         Map<String, Object> annotationAttributes = importingClassMetadata.getAnnotationAttributes(EnableMyFeign.class.getName());
         Class[] clients = (Class[]) annotationAttributes.get("clients");
@@ -57,23 +57,23 @@ public class MyFeignRegistry implements ImportBeanDefinitionRegistrar, BeanFacto
                     //是需要代理的接口
                     return AnnotationUtils.findAnnotation(x, MyFeignClient.class) != null;
                 })
-                .forEach( clazz ->{
+                .forEach(clazz -> {
                     //对每一个 @MyFeignClient标注的接口进行代理,用restTemplate进行调用
                     MyFeignClient myfeignClient = AnnotationUtils.findAnnotation(clazz, MyFeignClient.class);
-                    String serviceName  = myfeignClient.value();
+                    String serviceName = myfeignClient.value();
                     Object MyProxyObject = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{clazz}
-                                                                , new FeignClientMethodInvocationHandler(serviceName,beanFactory));
+                            , new FeignClientMethodInvocationHandler(serviceName, beanFactory));
                     //注册生成的代理类
-                    registryByFactoryBean(MyProxyObject,"feign"+serviceName,registry);
-                } );
+                    registryByFactoryBean(MyProxyObject, "feign" + serviceName, registry);
+                });
     }
 
-    private void registerBeanByScanPackages(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry){
+    private void registerBeanByScanPackages(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 
     }
 
-    private void registryByFactoryBean(Object obj,String beanName,BeanDefinitionRegistry registry){
-        FactoryBean factoryBean = new AbstractFactoryBean<>(){
+    private void registryByFactoryBean(Object obj, String beanName, BeanDefinitionRegistry registry) {
+        FactoryBean factoryBean = new AbstractFactoryBean<>() {
             @Override
             public Class<?> getObjectType() {
                 return obj.getClass();
@@ -87,11 +87,11 @@ public class MyFeignRegistry implements ImportBeanDefinitionRegistrar, BeanFacto
         AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder.genericBeanDefinition(FactoryBean.class, () -> {
             return factoryBean;
         }).getBeanDefinition();
-        registry.registerBeanDefinition(beanName,beanDefinition);
+        registry.registerBeanDefinition(beanName, beanDefinition);
     }
 
-    private void registryBySingleton(Object obj,BeanDefinitionRegistry registry){
-        if(registry instanceof SingletonBeanRegistry){
+    private void registryBySingleton(Object obj, BeanDefinitionRegistry registry) {
+        if (registry instanceof SingletonBeanRegistry) {
             SingletonBeanRegistry singleR = (SingletonBeanRegistry) registry;
             //   singleR.registerSingleton();
         }

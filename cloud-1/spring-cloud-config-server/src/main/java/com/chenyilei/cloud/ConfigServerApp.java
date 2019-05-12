@@ -41,15 +41,15 @@ public class ConfigServerApp {
     public static void main(String[] args) {
         new SpringApplicationBuilder(ConfigServerApp.class)
                 .run(args);
-        String a= "f";
+        String a = "f";
         System.out.println(String.class == a.getClass());
     }
 
     @Component
-    @Endpoint(id="myEnd")
-    static class MyEndPoint{
+    @Endpoint(id = "myEnd")
+    static class MyEndPoint {
         @ReadOperation
-        public String myEnd(){
+        public String myEnd() {
             return "123";
         }
     }
@@ -66,11 +66,11 @@ public class ConfigServerApp {
             return new EnvironmentRepository() {
                 @Override
                 public Environment findOne(String application, String profile, String label) {
-                    Environment environment = new Environment(application,new String[]{profile},label,null,null);
+                    Environment environment = new Environment(application, new String[]{profile}, label, null, null);
                     HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-                    PropertySource propertySource = new PropertySource("mySource",objectObjectHashMap);
+                    PropertySource propertySource = new PropertySource("mySource", objectObjectHashMap);
                     environment.add(propertySource);
-                    objectObjectHashMap.put("name","自己配置资源");
+                    objectObjectHashMap.put("name", "自己配置资源");
                     environment.setLabel("master");
                     environment.setProfiles(new String[]{"dev"});
                     environment.setName("config");

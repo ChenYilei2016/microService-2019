@@ -32,16 +32,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Configuration
 public class MyLoadBalanceAutoConifg {
 
-    @Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+    @Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
     @Documented
     @Inherited
     @Qualifier
-    public @interface MyLoadBalanced_{
+    public @interface MyLoadBalanced_ {
 
     }
 
-    public MyLoadBalanceAutoConifg(@Autowired @MyLoadBalanced_ List<RestTemplate> restTemplates){
+    public MyLoadBalanceAutoConifg(@Autowired @MyLoadBalanced_ List<RestTemplate> restTemplates) {
         System.out.println(restTemplates);
     }
 

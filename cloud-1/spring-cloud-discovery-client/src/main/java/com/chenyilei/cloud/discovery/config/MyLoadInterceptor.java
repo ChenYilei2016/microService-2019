@@ -36,23 +36,24 @@ public class MyLoadInterceptor implements ClientHttpRequestInterceptor {
     @Autowired
     DiscoveryClient discoveryClient;
     //服务对应的 url列表
-    static volatile Map<String, Set<String>> serviceName_Urls_Map = new ConcurrentHashMap<String,Set<String>>();
-    @Scheduled(cron = "0/10 * * * * ?") //定时更新服务列表
-    public void updateService(){
+    static volatile Map<String, Set<String>> serviceName_Urls_Map = new ConcurrentHashMap<String, Set<String>>();
+
+    @Scheduled(cron = "0/5 * * * * ?") //定时更新服务列表
+    public void updateService() {
         Map oldMap = serviceName_Urls_Map;
-        Map<String,Set<String>> newMap = new ConcurrentHashMap<String,Set<String>>();
+        Map<String, Set<String>> newMap = new ConcurrentHashMap<String, Set<String>>();
         discoveryClient.getServices().stream()
-                .forEach(serviceName->{
+                .forEach(serviceName -> {
                     //将每一个serviceName 映射成一个服务端url地址的Set
                     Set<String> collect = discoveryClient.getInstances(serviceName).stream().map(serviceInstance -> {
                         serviceInstance.isSecure();//这个可以判断是否是http/https
                         return "http://127.0.0.1" + ":" + serviceInstance.getPort();
                     }).collect(Collectors.toSet());
-                    newMap.put(serviceName,collect);
+                    newMap.put(serviceName, collect);
                 });
         serviceName_Urls_Map = newMap;
         oldMap.clear();
-        System.out.println("执行成功[updateService]:"+serviceName_Urls_Map);
+        System.out.println("执行成功[updateService]:" + serviceName_Urls_Map);
     }
 
     //http://spring-cloud-discovery-provider/test?msg=1561 ; 对应这样的请求
@@ -60,19 +61,22 @@ public class MyLoadInterceptor implements ClientHttpRequestInterceptor {
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
 //        request.getURI().getQuery()
 //        得到request的Uri
-        System.err.println("request:"+request);
+        System.err.println("request:" + request);
         URI uri = request.getURI();
-        uri.getHost() ;uri.getPath(); uri.getPort(); uri.getQuery();
+        uri.getHost();
+        uri.getPath();
+        uri.getPort();
+        uri.getQuery();
 //      www.baidu.com ; /abd/       ; 80           ; msg=ok...
         System.err.println(new String(body));
-        System.err.println(uri.getHost() );
-        System.err.println(uri.getPath() );
-        System.err.println(uri.getPort() );
-        System.err.println(uri.getQuery() );
+        System.err.println(uri.getHost());
+        System.err.println(uri.getPath());
+        System.err.println(uri.getPort());
+        System.err.println(uri.getQuery());
 
         String targetUrl = serviceName_Urls_Map.get(uri.getHost()).stream().findAny().get();
-        String reallyUrl = targetUrl+ uri.getPath() +"?"+uri.getQuery();
-        System.out.println("reallyUrl = "+ reallyUrl);
+        String reallyUrl = targetUrl + uri.getPath() + "?" + uri.getQuery();
+        System.out.println("reallyUrl = " + reallyUrl);
         URL url = new URL(reallyUrl);
         URLConnection urlConnection = url.openConnection();
 

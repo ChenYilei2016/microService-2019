@@ -32,11 +32,12 @@ public class FeignClientMethodInvocationHandler implements InvocationHandler {
     private BeanFactory beanFactory;
     private String serviceName;
     private static final ParameterNameDiscoverer parameterNameDiscoverer;
+
     static {
         parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
     }
 
-    public FeignClientMethodInvocationHandler(String serviceName,BeanFactory beanFactory) {
+    public FeignClientMethodInvocationHandler(String serviceName, BeanFactory beanFactory) {
         this.serviceName = serviceName;
         this.beanFactory = beanFactory;
     }
@@ -49,9 +50,9 @@ public class FeignClientMethodInvocationHandler implements InvocationHandler {
         invokeUrl.append("http://");
         invokeUrl.append(serviceName);
         //2 解析method,对参数,返回值等处理,拼接成url,请求.
-            //@requestMapping/@getMapping ;
+        //@requestMapping/@getMapping ;
         RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
-        if(null != requestMapping){
+        if (null != requestMapping) {
             String requestPath = requestMapping.value()[0];//TODO: 硬编码取 请求的一个地址
             invokeUrl.append(requestPath);
             invokeUrl.append("/?");
@@ -59,16 +60,16 @@ public class FeignClientMethodInvocationHandler implements InvocationHandler {
             //对参数解析 @requestParam,拼串
             Parameter[] parameters = method.getParameters();
             StringBuilder parametersQueryBuilding = new StringBuilder();
-            if(ObjectUtil.isNotNull(parameters)){
+            if (ObjectUtil.isNotNull(parameters)) {
                 for (int i = 0; i < parameters.length; i++) {
                     Parameter parameter = parameters[i];
                     //有无@requestParam
                     RequestParam requestParam = parameter.getDeclaredAnnotation(RequestParam.class);
                     parametersQueryBuilding.append("&");
-                    if( null == requestParam){
+                    if (null == requestParam) {
                         //形参名?
                         parametersQueryBuilding.append(parameterNameDiscoverer.getParameterNames(method)[i]);
-                    }else{
+                    } else {
                         parametersQueryBuilding.append(requestParam.value());
                     }
                     parametersQueryBuilding.append("=");
@@ -76,7 +77,7 @@ public class FeignClientMethodInvocationHandler implements InvocationHandler {
                 }
             }
             invokeUrl.append(parametersQueryBuilding.toString());
-            return myRestTemplate.getForObject(invokeUrl.toString(),method.getReturnType());
+            return myRestTemplate.getForObject(invokeUrl.toString(), method.getReturnType());
         }
         return method.invoke(args);
     }

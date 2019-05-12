@@ -21,19 +21,19 @@ import java.util.concurrent.*;
  */
 @Aspect
 @Component
-public class MyAspectHystrix{
+public class MyAspectHystrix {
     ExecutorService executorService = Executors.newFixedThreadPool(2);
     private volatile Semaphore semaphore = null;
 
     @Around("execution(* com.chenyilei.cloud.discovery.controller..*..*(..))&&" +
             "@annotation(myHystrixCommond)")
     public Object checkTimeOut(ProceedingJoinPoint proceedingJoinPoint
-                                ,MyHystrixCommond myHystrixCommond) throws Exception {
+            , MyHystrixCommond myHystrixCommond) throws Exception {
 
         //可以用信号量 作限流锁
-        if(semaphore == null){
-            synchronized (MyHystrixCommond.class){
-                if(semaphore == null){
+        if (semaphore == null) {
+            synchronized (MyHystrixCommond.class) {
+                if (semaphore == null) {
                     semaphore = new Semaphore(1);
                     boolean b = semaphore.tryAcquire(1000, TimeUnit.MILLISECONDS);//根据b来熔断
                     semaphore.release();
@@ -42,10 +42,10 @@ public class MyAspectHystrix{
         }
 
 
-        System.out.println("checkTimeOut拦截"+myHystrixCommond);
-        if(proceedingJoinPoint instanceof MethodInvocationProceedingJoinPoint){
+        System.out.println("checkTimeOut拦截" + myHystrixCommond);
+        if (proceedingJoinPoint instanceof MethodInvocationProceedingJoinPoint) {
             MethodInvocationProceedingJoinPoint joinPoint =
-                    (MethodInvocationProceedingJoinPoint)proceedingJoinPoint;
+                    (MethodInvocationProceedingJoinPoint) proceedingJoinPoint;
             MethodSignature signature = (MethodSignature) joinPoint.getSignature();
             Method method = signature.getMethod();
             MyHystrixCommond annotation = method.getAnnotation(MyHystrixCommond.class);
@@ -54,7 +54,7 @@ public class MyAspectHystrix{
         Future<?> submit = executorService.submit(() -> {
             Object returnValue = null;
             try {
-                returnValue =  proceedingJoinPoint.proceed();
+                returnValue = proceedingJoinPoint.proceed();
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
             }
@@ -64,7 +64,7 @@ public class MyAspectHystrix{
         Object returnValue = null;
         try {
             returnValue = submit.get(100, TimeUnit.MILLISECONDS);
-        }catch (TimeoutException e){
+        } catch (TimeoutException e) {
             submit.cancel(true);
             returnValue = "超时了";
         }
@@ -72,7 +72,7 @@ public class MyAspectHystrix{
     }
 
     @PreDestroy
-    public void destory(){
+    public void destory() {
         executorService.shutdown();
     }
 }

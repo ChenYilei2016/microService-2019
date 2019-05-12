@@ -11,12 +11,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author chenyilei
  * @email 705029004@qq.com
  * @date 2019/05/08- 21:03
- *
- *
  */
 @FeignClient(name = "spring-cloud-discovery-provider")
 public interface InvokingServerService {
 
     @GetMapping("/test")
-    public String test(@RequestParam(value = "msg",required = false)String msg);
+    public String test(@RequestParam(value = "msg", required = false) String msg);
 }

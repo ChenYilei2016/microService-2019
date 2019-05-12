@@ -34,7 +34,6 @@ import java.util.stream.Stream;
 /**
  * 描述自己的媒体类型{@link org.springframework.http.MediaType} text/html
  *
- *
  * @author chenyilei
  * @email 705029004@qq.com
  * @date 2019/04/29- 13:48
@@ -50,7 +49,7 @@ import java.util.stream.Stream;
  */
 @EnableMyFeign(clients = MyRestInterface.class)
 public class DiscoveryApp implements ApplicationContextAware {
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         ConfigurableApplicationContext context = new SpringApplicationBuilder(DiscoveryApp.class)
                 .run(args);
 
@@ -82,23 +81,24 @@ public class DiscoveryApp implements ApplicationContextAware {
 //        HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 //        System.out.println(response.body());
 
-        InvokingServerService.class.getMethod("test",String.class).getAnnotationsByType(RequestParam.class);
-        InvokingServerService.class.getMethod("test",String.class).getParameters()[0].getDeclaredAnnotations();
+        InvokingServerService.class.getMethod("test", String.class).getAnnotationsByType(RequestParam.class);
+        InvokingServerService.class.getMethod("test", String.class).getParameters()[0].getDeclaredAnnotations();
 
         ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
         String[] tests = parameterNameDiscoverer.getParameterNames(InvokingServerService.class.getMethod("test", String.class));
         Stream.of(tests).forEach(System.out::println);
 
     }
+
     @Bean
     @LoadBalanced
-    public RestTemplate restTemplate(){
+    public RestTemplate restTemplate() {
         return new RestTemplate(new OkHttp3ClientHttpRequestFactory());
     }
 
     @Bean
     @MyLoadBalanceAutoConifg.MyLoadBalanced_
-    public RestTemplate myRestTemplate(){
+    public RestTemplate myRestTemplate() {
         return new RestTemplate();
     }
 

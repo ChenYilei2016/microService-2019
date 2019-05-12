@@ -15,5 +15,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 @MyFeignClient(value = "spring-cloud-discovery-provider")
 public interface MyRestInterface {
     @RequestMapping("/test")
-    public String test(@RequestParam(value = "msg",required = false)String msg);
+    public String test(@RequestParam(value = "msg", required = false) String msg);
 }

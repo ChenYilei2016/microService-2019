@@ -12,6 +12,8 @@ import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
+
 /**
  * 描述自己的媒体类型{@link org.springframework.http.MediaType} text/html
  * 使用拦截器,让restTemplate 进行负载均衡
@@ -29,11 +31,11 @@ public class DiscoveryServerApp {
     public static void main(String[] args) {
         new SpringApplicationBuilder(DiscoveryServerApp.class)
                 .run(args);
-
     }
+
     @Bean
     @LoadBalanced
-    public RestTemplate restTemplate(){
+    public RestTemplate restTemplate() {
         return new RestTemplate(new OkHttp3ClientHttpRequestFactory());
     }
 }

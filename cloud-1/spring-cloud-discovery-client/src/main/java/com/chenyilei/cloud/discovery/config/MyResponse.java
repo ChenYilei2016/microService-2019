@@ -16,7 +16,7 @@ import java.net.URLConnection;
  */
 public class MyResponse extends AbstractClientHttpResponse {
 
-    private final URLConnection urlConnection ;
+    private final URLConnection urlConnection;
 
     public MyResponse(final URLConnection urlConnection) {
         this.urlConnection = urlConnection;
@@ -45,7 +45,7 @@ public class MyResponse extends AbstractClientHttpResponse {
     @Override
     public HttpHeaders getHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Content-Type","application/text;charset=utf-8");
+        httpHeaders.add("Content-Type", "application/text;charset=utf-8");
         return httpHeaders;
     }
 }

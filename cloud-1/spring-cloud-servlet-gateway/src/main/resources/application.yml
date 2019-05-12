@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: neo_route
+          uri: http://www.ityouknow.com
+          predicates:
+            - Path=/spring-cloud
+
+        - id: my_route
+          uri: http://127.0.0.1:9090
+          predicates:
+            - Path=/test*
+            - Method=GET
+
+        - id: my2_route
+          uri: http://www.chenyilei.cn
+          predicates:
+            - Path=/index.html
+            - Method=GET

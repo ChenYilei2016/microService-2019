@@ -15,6 +15,8 @@ import java.lang.annotation.*;
 @Documented
 public @interface MyHystrixCommond {
     int timeout() default -1;
+
     int semphore() default 1;
+
     String text() default "";
 }

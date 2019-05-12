@@ -20,5 +20,6 @@ import java.lang.annotation.*;
 @Import(MyFeignRegistry.class)
 public @interface EnableMyFeign {
     Class<?>[] clients() default {}; //代理谁
-    String[] scanPackages() default{}; //扫描路径
+
+    String[] scanPackages() default {}; //扫描路径
 }
