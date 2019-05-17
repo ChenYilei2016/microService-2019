@@ -1,0 +1,14 @@
+
+spring:
+  application:
+    name: stream-server
+  cloud:
+    stream:
+      bindings:
+        gupao2018:
+          destination: test2018
+
+server:
+  port: 9090
+
+

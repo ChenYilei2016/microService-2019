@@ -73,7 +73,7 @@ public class MyFeignRegistry implements ImportBeanDefinitionRegistrar, BeanFacto
     }
 
     private void registryByFactoryBean(Object obj, String beanName, BeanDefinitionRegistry registry) {
-        FactoryBean factoryBean = new AbstractFactoryBean<>() {
+        FactoryBean factoryBean = new AbstractFactoryBean<Object>() {
             @Override
             public Class<?> getObjectType() {
                 return obj.getClass();

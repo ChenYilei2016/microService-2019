@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway-my
+  cloud:
+    gateway:
+      routes:
+        - id: myroute1
+          uri: http://127.0.0.1:9090/test
+          predicates:
+            - Path=/myroute1/test
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+#zuul:
+#  routes:
+#    myproxy:
+#      path: /myproxy/**
+#
+#myproxy:
+#  ribbon:
+#    listOfServers: localhost:9090

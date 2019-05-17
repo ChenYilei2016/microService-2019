@@ -1,13 +1,6 @@
 package com.chenyilei.cloud.discovery.myfeign.ext;
 
-import cn.hutool.core.util.ObjectUtil;
-import com.chenyilei.cloud.discovery.config.MyLoadBalanceAutoConifg;
-import org.apache.commons.lang.ObjectUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +10,6 @@ import org.springframework.web.client.RestTemplate;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * 将接口的方法映射成远程调用
@@ -60,7 +51,7 @@ public class FeignClientMethodInvocationHandler implements InvocationHandler {
             //对参数解析 @requestParam,拼串
             Parameter[] parameters = method.getParameters();
             StringBuilder parametersQueryBuilding = new StringBuilder();
-            if (ObjectUtil.isNotNull(parameters)) {
+            if (null != parameters) {
                 for (int i = 0; i < parameters.length; i++) {
                     Parameter parameter = parameters[i];
                     //有无@requestParam

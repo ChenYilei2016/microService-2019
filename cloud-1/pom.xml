@@ -6,7 +6,10 @@
     <modules>
         <module>spring-cloud-servlet-gateway</module>
 		<module>servlet-gateway</module>
-	</modules>
+        <module>spring-cloud-stream-consumer</module>
+		<module>spring-cloud-discovery-client</module>
+		<module>spring-cloud-discovery-provider</module>
+    </modules>
     <parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -14,9 +17,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.chenyilei</groupId>
-	<artifactId>gateway</artifactId>
+	<artifactId>cloud-1</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>gateway</name>
+	<name>cloud-1</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>

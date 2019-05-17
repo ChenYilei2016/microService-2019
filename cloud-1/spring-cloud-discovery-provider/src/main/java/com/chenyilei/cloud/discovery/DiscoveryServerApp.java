@@ -9,6 +9,7 @@ import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,6 +28,7 @@ import java.util.Date;
 @EnableDiscoveryClient
 @EnableHystrix
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAsync
 public class DiscoveryServerApp {
     public static void main(String[] args) {
         new SpringApplicationBuilder(DiscoveryServerApp.class)

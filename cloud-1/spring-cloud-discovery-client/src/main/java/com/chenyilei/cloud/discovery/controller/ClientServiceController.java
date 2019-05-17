@@ -1,11 +1,19 @@
 package com.chenyilei.cloud.discovery.controller;
 
 import com.chenyilei.cloud.discovery.config.MyLoadBalanceAutoConifg;
+import com.chenyilei.cloud.discovery.event.MyRemoteEventListener;
 import com.chenyilei.cloud.discovery.myfeign.MyRestInterface;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -23,7 +32,7 @@ import java.util.Random;
  * @date 2019/04/29- 15:14
  */
 @RestController
-public class ClientServiceController {
+public class ClientServiceController implements BeanFactoryAware {
 
     @Autowired
     private DiscoveryClient discoveryClient;
@@ -33,6 +42,7 @@ public class ClientServiceController {
 
     @Autowired
     @MyLoadBalanceAutoConifg.MyLoadBalanced_
+//    @Qualifier("myRestTemplate")
     RestTemplate restTemplate;
 
     @Autowired
@@ -89,5 +99,11 @@ public class ClientServiceController {
         return ribbonRestTemplate.getForObject("http://spring-cloud-discovery-provider/test?msg=ok", String.class);
         //return "调用了client的方法port:8080";
     }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        System.out.println("1");
+    }
+
 
 }

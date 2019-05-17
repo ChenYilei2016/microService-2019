@@ -3,20 +3,35 @@ package com.chenyilei.cloud.discovery;
 import com.chenyilei.cloud.discovery.config.MyLoadBalanceAutoConifg;
 import com.chenyilei.cloud.discovery.controller.InvokingServerService;
 import com.chenyilei.cloud.discovery.myfeign.EnableMyFeign;
+import com.chenyilei.cloud.discovery.myfeign.MyFeignRegistry;
 import com.chenyilei.cloud.discovery.myfeign.MyRestInterface;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.BeanFactoryAnnotationUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.cloud.stream.messaging.Source;
+import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;
+import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryAutoConfiguration;
+import org.springframework.cloud.zookeeper.discovery.ZookeeperDiscoveryClientConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
+import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,16 +58,16 @@ import java.util.stream.Stream;
 @EnableDiscoveryClient
 @EnableScheduling
 @EnableFeignClients(clients = InvokingServerService.class)
-
 /**
  * 实现feign流程,导入引导类
  */
 @EnableMyFeign(clients = MyRestInterface.class)
+@EnableBinding(Source.class)
 public class DiscoveryApp implements ApplicationContextAware {
     public static void main(String[] args) throws Exception {
-        ConfigurableApplicationContext context = new SpringApplicationBuilder(DiscoveryApp.class)
+        ConfigurableApplicationContext context =
+                new SpringApplicationBuilder(DiscoveryApp.class)
                 .run(args);
-
 //        String[] split1 = StringUtils.split("/dfa/dasd/", "/");
 //        String[] split2 = "/dfa/dasd/".split("/");
 //        System.out.println(Arrays.asList(split1));
@@ -80,16 +95,23 @@ public class DiscoveryApp implements ApplicationContextAware {
 //        HttpRequest httpRequest = HttpRequest.newBuilder(URI.create("http://www.baidu.com")).build();
 //        HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 //        System.out.println(response.body());
+        //((AnnotationConfigServletWebServerApplicationContext) context).getBeanDefinition("myRestTemplate")
 
-        InvokingServerService.class.getMethod("test", String.class).getAnnotationsByType(RequestParam.class);
-        InvokingServerService.class.getMethod("test", String.class).getParameters()[0].getDeclaredAnnotations();
-
-        ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
-        String[] tests = parameterNameDiscoverer.getParameterNames(InvokingServerService.class.getMethod("test", String.class));
-        Stream.of(tests).forEach(System.out::println);
+//        BeanFactoryAnnotationUtils.qualifiedBeanOfType(context.getBeanFactory(),RestTemplate.class,"haha");
+//
+//        InvokingServerService.class.getMethod("test", String.class).getAnnotationsByType(RequestParam.class);
+//        InvokingServerService.class.getMethod("test", String.class).getParameters()[0].getDeclaredAnnotations();
+//
+//        ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
+//        String[] tests = parameterNameDiscoverer.getParameterNames(MyRestInterface.class.getMethod("test", String.class));
+//        Stream.of(tests).forEach(System.out::println);
 
     }
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        System.out.println("!");
+    }
     @Bean
     @LoadBalanced
     public RestTemplate restTemplate() {
@@ -100,10 +122,5 @@ public class DiscoveryApp implements ApplicationContextAware {
     @MyLoadBalanceAutoConifg.MyLoadBalanced_
     public RestTemplate myRestTemplate() {
         return new RestTemplate();
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        System.out.println("!");
     }
 }

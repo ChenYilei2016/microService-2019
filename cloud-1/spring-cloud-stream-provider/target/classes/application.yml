@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: stream-client
+  cloud:
+    stream:
+      bindings:
+        gupao2018:
+          destination: test2018
+
+
+
+
+#  cloud:
+#    stream:
+#      rabbit:
+#        bindings:
+#          output: 默认的输出 Source
+#            destination: test2018
