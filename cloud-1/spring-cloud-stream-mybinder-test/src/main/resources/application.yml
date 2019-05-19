@@ -1,0 +1,20 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: mybinder-testm
+  cloud:
+    stream:
+      bindings:
+        output: #管道
+          destnation: cloudbus #管道指向的交换机
+        input:
+          destnation: cloudbus
+
+      default-binder: mymq
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
